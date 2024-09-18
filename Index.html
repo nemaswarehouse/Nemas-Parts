@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Parts Catalog</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+    <script>
+        // CSV data as a string
+        const csvData = `
+Part Number,Model,Description,QTY
+001,ModelA,Description of Model A,10
+002,ModelB,Description of Model B,5
+003,ModelC,Description of Model C,8
+`;
+
+        // Function to parse CSV data
+        function parseCSV(data) {
+            return data.trim().split("\n").map(row => row.split(","));
+        }
+
+        // Function to search the catalog
+        function searchCatalog() {
+            var inputModel = document.getElementById("searchModel").value.toUpperCase();
+            var inputDescription = document.getElementById("searchDescription").value.toUpperCase();
+            var table = document.getElementById("results");
+            table.innerHTML = "";  // Clear the table before showing results
+
+            var rows = parseCSV(csvData);
+            // Create table headers
+            var headers = ["Part Number", "Model", "Description", "QTY"];
+            var headerRow = table.insertRow();
+            for (var k = 0; k < headers.length; k++) {
+                var th = document.createElement("th");
+                th.innerHTML = headers[k];
+                headerRow.appendChild(th);
+            }
+
+            // Loop through CSV rows and search
+            for (var i = 1; i < rows.length; i++) { // Skip the header
+                var columns = rows[i];
+                var partNumber = columns[0].toUpperCase();
+                var model = columns[1].toUpperCase();
+                var description = columns[2].toUpperCase();
+                var qty = columns[3];  // QTY
+
+                // Search by partial match in model and description
+                if ((model.includes(inputModel) || inputModel === "") &&
+                    (description.includes(inputDescription) || inputDescription === "")) {
+                    var row = table.insertRow();
+                    for (var j = 0; j < columns.length; j++) {
+                        var cell = row.insertCell();
+                        cell.innerHTML = columns[j];
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <h2>Search Parts Catalog</h2>
+    <label for="searchModel">Model:</label>
+    <input type="text" id="searchModel" placeholder="Enter model...">
+    <label for="searchDescription">Description:</label>
+    <input type="text" id="searchDescription" placeholder="Enter description...">
+    <button onclick="searchCatalog()">Search</button>
+
+    <h3>Results</h3>
+    <table id="results">
+        <!-- Search results will be displayed here -->
+    </table>
+</body>
+</html>
